@@ -1,19 +1,30 @@
 "use client";
 
-import { forwardRef, useImperativeHandle, useRef } from "react";
+import { ReactNode, forwardRef, useImperativeHandle, useRef } from "react";
 
-const Container = forwardRef(function Scrollable({ children }, ref) {
-  const divRef = useRef(null);
+export type scrollingHandle = {
+  scrollToTop: () => void;
+  scrollToBottom: () => void;
+};
+
+type Props = { children: ReactNode };
+
+const Container = forwardRef<scrollingHandle, Props>(function Scrollable(
+  { children },
+  ref
+) {
+  const divRef = useRef<HTMLDivElement>(null);
 
   useImperativeHandle(
     ref,
     () => {
       return {
         scrollToTop() {
-          divRef.current.scrollTop = 0;
+          if (divRef.current) divRef.current.scrollTop = 0;
         },
         scrollToBottom() {
-          divRef.current.scrollTop = divRef.current.scrollHeight;
+          if (divRef.current)
+            divRef.current.scrollTop = divRef.current.scrollHeight;
         },
       };
     },
@@ -21,13 +32,13 @@ const Container = forwardRef(function Scrollable({ children }, ref) {
   );
 
   return (
-    <div className="m-auto border border-red-400 w-[400px] h-[300px] flex flex-col">
-      <div className="m-auto">
-        <div className="overflow-y-scroll h-[200px]" ref={divRef}>
-          {children}
-        </div>
-      </div>
+    // <div className="m-auto border border-red-400 w-[400px] h-[300px] flex flex-col">
+    //   <div className="m-auto">
+    <div className="overflow-y-scroll h-[200px]" ref={divRef}>
+      {children}
     </div>
+    //   </div>
+    // </div>
   );
 });
 
